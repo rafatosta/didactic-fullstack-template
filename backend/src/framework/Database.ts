@@ -7,7 +7,9 @@ import { mkdirSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
-const backendRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../../..");
+// src/framework -> src -> backend
+// Mantém o mesmo arquivo utilizado por scripts/reset-db.ts.
+const backendRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 const databasePath = resolve(backendRoot, "database", "app.db");
 mkdirSync(dirname(databasePath), { recursive: true });
 
