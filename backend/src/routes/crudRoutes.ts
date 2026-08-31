@@ -21,12 +21,16 @@ export function registerCrudRoutes<TCreate, TEntity>(
         return entity ?? reply.code(404).send({ message: "Registro não encontrado" });
     });
 
-    app.post<{ Body: TCreate }>(`/api/${resource}`, async (request, reply) =>
-        reply.code(201).send(dao.inserir(request.body)),
-    );
+    app.post<{ Body: TCreate }>(`/api/${resource}`, async (request, reply) => {
+        // O Fastify 5 normaliza genericamente o Body com tipos internos.
+        // Na fronteira HTTP, restauramos o tipo declarado pela própria rota.
+        const body = request.body as TCreate;
+        return reply.code(201).send(dao.inserir(body));
+    });
 
     app.put<{ Params: { id: string }; Body: TCreate }>(`/api/${resource}/:id`, async (request, reply) => {
-        const entity = dao.atualizar(Number(request.params.id), request.body);
+        const body = request.body as TCreate;
+        const entity = dao.atualizar(Number(request.params.id), body);
         return entity ?? reply.code(404).send({ message: "Registro não encontrado" });
     });
 
