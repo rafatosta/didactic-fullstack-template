@@ -2,13 +2,20 @@
 
 Template didático full-stack para ensino de Programação Orientada a Objetos, SQL, APIs e componentes React com baixa curva de aprendizagem.
 
-> Estado: primeira implementação de referência em validação. O arquivo `AGENTS.md` definitivo e o prompt de geração de novos domínios serão criados somente depois que esta base estiver estabilizada.
+> Estado: **template de referência validado funcionalmente** para backend, frontend, SQLite, CRUD e relacionamentos 1:N e N:N.
 
 ## Objetivo
 
 O template deve sempre representar uma **solução de referência completa e funcional**. A versão entregue aos alunos será preparada manualmente pelo professor, removendo apenas os arquivos ou trechos adequados à atividade.
 
 O aluno não precisa conhecer os detalhes de infraestrutura para trabalhar com modelos, DAO, SQL e componentes React.
+
+## Arquivos principais
+
+- `AGENTS.md`: contrato arquitetural permanente do template.
+- `DOMAIN.md`: descrição variável do domínio atual.
+- `PROMPT-CODEX.md`: instrução operacional reutilizável para gerar ou substituir um domínio.
+- `docs/AREAS.md`: classificação entre área didática, infraestrutura e implementação de referência.
 
 ## Stack
 
@@ -33,22 +40,23 @@ O aluno não precisa conhecer os detalhes de infraestrutura para trabalhar com m
 - CRUD encapsulado por infraestrutura própria
 - sem Axios
 - sem Redux
-- sem biblioteca de componentes nesta primeira versão
+- sem biblioteca de componentes obrigatória
 
-## Domínio de referência
+## Arquitetura didática
 
-A validação inicial usa três entidades:
+Backend:
 
-- Universidade
-- Aluno
-- Disciplina
+```text
+Modelos -> DAO -> SQL -> SQLite
+```
 
-Relacionamentos:
+Frontend:
 
-- Universidade 1:N Aluno
-- Aluno N:N Disciplina
+```text
+Modelos -> páginas/componentes -> API encapsulada
+```
 
-Veja `DOMAIN.md`.
+A infraestrutura HTTP, conexão SQLite, Fetch, proxy e detalhes de integração permanecem prontos.
 
 ## Estrutura
 
@@ -72,8 +80,6 @@ frontend/
     └── framework/    # infraestrutura
 ```
 
-A classificação completa está em `docs/AREAS.md`.
-
 ## Executar localmente
 
 ### Backend
@@ -81,6 +87,7 @@ A classificação completa está em `docs/AREAS.md`.
 ```bash
 cd backend
 npm install
+npm run build
 npm run db:reset
 npm run dev
 ```
@@ -94,6 +101,7 @@ Em outro terminal:
 ```bash
 cd frontend
 npm install
+npm run build
 npm run dev
 ```
 
@@ -101,7 +109,54 @@ Frontend local: `http://127.0.0.1:5173`.
 
 O Vite encaminha automaticamente chamadas iniciadas por `/api` para o backend. Assim, páginas e componentes não precisam conhecer host, porta ou configuração de CORS.
 
-## Validação manual da primeira versão
+## Domínio de referência validado
+
+A validação inicial utiliza:
+
+- Universidade;
+- Aluno;
+- Disciplina.
+
+Relacionamentos:
+
+- Universidade 1:N Aluno;
+- Aluno N:N Disciplina.
+
+Foram validados criação do banco, seed, build TypeScript, carregamento dos dados, criação, leitura, atualização, exclusão e integração frontend/backend.
+
+Veja `DOMAIN.md`.
+
+## Como criar um novo projeto com outro domínio
+
+### 1. Use este repositório como base
+
+Crie uma cópia ou novo repositório baseado neste template.
+
+### 2. Edite apenas o domínio
+
+Substitua em `DOMAIN.md`:
+
+- nome do projeto;
+- descrição;
+- diagrama de classes;
+- entidades e atributos;
+- relacionamentos;
+- regras específicas;
+- dados iniciais desejados.
+
+Não é necessário reescrever a arquitetura.
+
+### 3. Execute o prompt do Codex
+
+Use o conteúdo de `PROMPT-CODEX.md` ou envie ao Codex uma instrução equivalente a:
+
+```text
+Leia integralmente AGENTS.md e DOMAIN.md e implemente o domínio completo sobre este template. Preserve a infraestrutura e só conclua quando backend, frontend, banco, CRUD e relacionamentos estiverem funcionais.
+```
+
+O agente deve usar `AGENTS.md` como contrato obrigatório.
+
+### 4. Valide a solução de referência
 
 Backend:
 
@@ -122,27 +177,45 @@ npm run build
 npm run dev
 ```
 
-Com os dois processos executando, validar pelo frontend:
+Teste pela interface:
 
-```bash
-curl http://127.0.0.1:5173/api/health
-curl http://127.0.0.1:5173/api/universidades
-curl http://127.0.0.1:5173/api/disciplinas
-curl http://127.0.0.1:5173/api/alunos
-```
+- listagem;
+- criação;
+- edição;
+- exclusão;
+- relacionamentos 1:N;
+- relacionamentos N:N;
+- mensagens de erro.
 
-## Critério mínimo de validade
+### 5. Prepare manualmente a versão do aluno
 
-O template só será considerado estabilizado quando:
+Somente depois da solução completa estar validada, o professor decide quais arquivos ou trechos serão removidos.
 
-1. `schema.sql` e `seed.sql` recriarem o SQLite local;
-2. backend e frontend passarem na verificação TypeScript;
-3. todas as entidades tiverem CRUD funcional;
-4. relacionamentos 1:N e N:N funcionarem;
-5. cada modelo persistente possuir uma página CRUD funcional;
-6. o frontend consumir a API somente pela infraestrutura pronta;
-7. criação, leitura, atualização e exclusão forem verificadas pela interface.
+Exemplos possíveis:
 
-## Próxima etapa
+- remover modelos backend;
+- remover DAOs ou apenas os SQLs;
+- manter backend completo e remover modelos/componentes frontend;
+- manter um CRUD como exemplo e remover outros;
+- retirar apenas a implementação de um relacionamento.
 
-Depois da estabilização desta base será criado o conjunto definitivo de regras (`AGENTS.md`) e a especificação que permitirá ao Codex transformar um novo diagrama de classes em outro projeto completo sem alterar a arquitetura do template.
+O template não automatiza essa etapa porque a escolha depende do objetivo pedagógico de cada atividade.
+
+## Critério obrigatório para novos domínios
+
+Um domínio só está concluído quando:
+
+1. `schema.sql` e `seed.sql` recriam o SQLite local;
+2. backend e frontend passam no build TypeScript;
+3. todas as entidades persistentes possuem CRUD funcional;
+4. cada entidade persistente possui uma página CRUD funcional;
+5. relacionamentos 1:N e N:N definidos no domínio funcionam;
+6. o frontend consome a API pela infraestrutura pronta;
+7. criação, leitura, atualização e exclusão foram verificadas;
+8. não existem TODOs, stubs ou implementações propositalmente incompletas.
+
+## Regra fundamental
+
+**O domínio muda; a arquitetura didática permanece.**
+
+Antes de qualquer alteração estrutural, consulte `AGENTS.md`.
