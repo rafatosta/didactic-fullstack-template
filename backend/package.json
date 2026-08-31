@@ -1,0 +1,21 @@
+{
+  "name": "didactic-fullstack-backend",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "start": "tsx src/server.ts",
+    "build": "tsc --noEmit",
+    "db:reset": "tsx scripts/reset-db.ts"
+  },
+  "dependencies": {
+    "better-sqlite3": "^13.0.3",
+    "fastify": "^5.12.1"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/node": "^24.0.0",
+    "tsx": "^4.20.0",
+    "typescript": "^5.9.0"
+  }
+}
