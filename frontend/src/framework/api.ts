@@ -1,11 +1,14 @@
 /** INFRAESTRUTURA: encapsula Fetch, JSON, métodos HTTP e erros. */
 async function request<T>(url: string, options: RequestInit = {}): Promise<T> {
+    const headers = new Headers(options.headers);
+
+    if (options.body != null && !headers.has("Content-Type")) {
+        headers.set("Content-Type", "application/json");
+    }
+
     const response = await fetch(url, {
         ...options,
-        headers: {
-            "Content-Type": "application/json",
-            ...options.headers,
-        },
+        headers,
     });
 
     if (!response.ok) {
