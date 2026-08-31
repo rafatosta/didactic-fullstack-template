@@ -4,7 +4,7 @@ Este arquivo define as regras obrigatórias para qualquer agente que modifique e
 
 ## Objetivo do template
 
-Este repositório é um template didático full-stack para ensino de Programação Orientada a Objetos, SQL, APIs e componentes React com baixa curva de aprendizagem.
+Este repositório é um template didático full-stack para ensino de Programação Orientada a Objetos, SQL, APIs, testes e componentes React com baixa curva de aprendizagem.
 
 O resultado de qualquer geração deve ser uma **solução de referência completa e funcional**. A versão destinada aos alunos será preparada manualmente pelo professor depois da validação.
 
@@ -21,7 +21,6 @@ Em caso de conflito, preserve primeiro a arquitetura validada existente e depois
 ## Stack obrigatória
 
 ### Backend
-
 - Node.js
 - TypeScript
 - Fastify 5
@@ -29,19 +28,20 @@ Em caso de conflito, preserve primeiro a arquitetura validada existente e depois
 - `better-sqlite3`
 - padrão DAO
 - SQL puro
+- Vitest
 - `schema.sql` para criação do banco
 - `seed.sql` para povoamento
 - sem ORM
 - sem migrations nesta etapa
 
 ### Frontend
-
 - Vite 8
 - React 19
 - TypeScript
 - Tailwind CSS 4
 - Fetch nativo encapsulado pela infraestrutura
 - estado local do React
+- Vitest + React Testing Library + jsdom
 - sem Axios
 - sem Redux
 - sem biblioteca de componentes obrigatória
@@ -50,263 +50,122 @@ Em caso de conflito, preserve primeiro a arquitetura validada existente e depois
 
 A infraestrutura pode ser moderna, mas a superfície que o aluno precisa compreender deve permanecer pequena.
 
-O aluno deve trabalhar principalmente com:
+Backend didático: modelos/interfaces/classes, DAOs, SQL do CRUD e relacionamentos. Frontend didático: modelos/interfaces correspondentes ao backend e componentes/páginas quando fizerem parte da atividade.
 
-Backend:
-- modelos/interfaces/classes;
-- DAOs;
-- SQL do CRUD;
-- relacionamentos de dados.
-
-Frontend:
-- modelos/interfaces correspondentes ao backend;
-- componentes e páginas quando isso fizer parte da atividade.
-
-O aluno não deve precisar escrever código de conexão SQLite, configuração Fastify, detalhes HTTP, headers, URLs de API, CORS, proxy, serialização JSON ou Fetch para concluir uma atividade normal.
+O aluno não deve precisar escrever conexão SQLite, configuração Fastify, detalhes HTTP, headers, URLs de API, CORS, proxy, serialização JSON ou Fetch para concluir uma atividade normal.
 
 ## Áreas do projeto
 
 ### ÁREA DIDÁTICA
-
-Conteúdo diretamente relacionado ao que pode ser estudado, removido ou parcialmente implementado na versão do aluno.
-
-Backend:
-- `backend/src/models/`
-- `backend/src/dao/`
-- `backend/database/schema.sql`
-
-Frontend:
-- `frontend/src/models/`
-- `frontend/src/pages/`
-- componentes específicos do domínio, quando existirem
+Backend: `backend/src/models/`, `backend/src/dao/`, `backend/database/schema.sql`, `backend/tests/didactic/`.
+Frontend: `frontend/src/models/`, `frontend/src/pages/`, componentes específicos do domínio e `frontend/tests/didactic/`.
 
 ### INFRAESTRUTURA
-
-Código de suporte que deve permanecer pronto em atividades normais.
-
-Backend:
-- `backend/src/framework/`
-- `backend/src/routes/`
-- `backend/scripts/`
-
-Frontend:
-- `frontend/src/framework/`
-- configuração Vite
-- configuração Tailwind
+Backend: `backend/src/framework/`, `backend/src/routes/`, `backend/scripts/`, `backend/tests/infrastructure/` quando existirem.
+Frontend: `frontend/src/framework/`, configuração Vite/Tailwind e `frontend/tests/infrastructure/`.
 
 Não altere a infraestrutura existente apenas por preferência arquitetural. Altere somente quando houver necessidade funcional concreta e preserve compatibilidade com o padrão já validado.
 
 ### IMPLEMENTAÇÃO DE REFERÊNCIA
-
-Código completo gerado para comprovar que o projeto funciona ponta a ponta.
-
-A implementação de referência deve sempre estar completa. A remoção de conteúdo para criar a versão do aluno é responsabilidade posterior do professor.
+Código completo gerado para comprovar que o projeto funciona ponta a ponta. A remoção de conteúdo para criar a versão do aluno é responsabilidade posterior do professor.
 
 ## Banco de dados
 
-O banco é SQLite e deve permanecer local.
+O banco é SQLite e deve permanecer local. `schema.sql` cria estrutura e `seed.sql` fornece dados iniciais. O banco deve ser recriável integralmente por esses dois arquivos. Não use ORM nem migrations.
 
-Arquivos obrigatórios:
-
-- `backend/database/schema.sql`
-- `backend/database/seed.sql`
-- `backend/database/app.db` gerado localmente e não usado como fonte de verdade
-
-Regras:
-
-1. `schema.sql` deve criar todas as tabelas, chaves primárias, chaves estrangeiras, restrições e tabelas associativas necessárias ao domínio.
-2. `seed.sql` deve inserir dados suficientes para que todas as páginas CRUD e relacionamentos possam ser testados após `npm run db:reset`.
-3. O banco deve ser recriável integralmente a partir de `schema.sql` + `seed.sql`.
-4. Não introduza ORM apenas para criar o banco.
-5. Não introduza migrations enquanto o template permanecer com a finalidade didática atual.
+Testes nunca devem usar ou apagar `backend/database/app.db`. Use banco SQLite temporário/isolado por meio de `DIDACTIC_DATABASE_PATH` ou estratégia equivalente.
 
 ## Backend
 
-### Modelos
+Cada entidade persistente definida em `DOMAIN.md` deve possuir modelo TypeScript e DAO próprio. O DAO deve encapsular persistência, usar SQL puro, implementar CRUD completo, reutilizar a infraestrutura de banco e evitar camadas adicionais desnecessárias.
 
-Cada entidade persistente definida em `DOMAIN.md` deve possuir um modelo TypeScript correspondente.
-
-Mantenha os modelos simples e coerentes com os campos expostos pela API.
-
-### DAO
-
-Cada entidade persistente deve possuir um DAO próprio.
-
-O DAO deve:
-
-- encapsular persistência da entidade;
-- utilizar SQL puro;
-- implementar CRUD completo quando aplicável;
-- utilizar a infraestrutura de banco existente;
-- não acessar `better-sqlite3` diretamente fora da infraestrutura;
-- evitar camadas adicionais como Service + Repository + DAO simultaneamente.
-
-O objetivo didático é manter visível a relação:
-
-`Modelo -> DAO -> SQL -> SQLite`.
-
-### API
-
-Cada entidade persistente deve possuir endpoints funcionais para:
-
-- listar;
-- buscar por id;
-- criar;
-- atualizar;
-- excluir.
-
-Use a infraestrutura de rotas existente quando ela atender ao caso.
-
-Crie rotas adicionais apenas para operações de relacionamento ou comportamento que não possam ser representadas pelo CRUD genérico.
+Cada entidade deve expor endpoints para listar, buscar por id, criar, atualizar e excluir, quando aplicável. Rotas adicionais são permitidas apenas para relacionamentos ou comportamentos que o CRUD genérico não represente.
 
 ## Frontend
 
-Cada entidade persistente definida em `DOMAIN.md` deve possuir pelo menos uma página funcional de CRUD.
+Cada entidade persistente definida em `DOMAIN.md` deve possuir pelo menos uma página CRUD funcional. A navegação principal deve permitir acesso a todas as entidades.
 
-Cada página deve permitir, quando aplicável:
+O frontend possui modelos próprios correspondentes aos contratos da API. A duplicação entre backend e frontend é intencional e didática.
 
-- listar registros;
-- criar registro;
-- editar registro;
-- excluir registro.
-
-A navegação principal deve permitir acessar todas as entidades persistentes.
-
-### Modelos do frontend
-
-O frontend deve possuir modelos/interfaces próprios correspondentes aos contratos retornados pela API.
-
-A duplicação entre modelo backend e frontend é intencional e didática.
-
-### Comunicação com API
-
-Nunca use `fetch` diretamente em páginas ou componentes de domínio se a infraestrutura existente já oferece a operação necessária.
-
-Use `frontend/src/framework/api.ts` e os hooks/abstrações existentes.
-
-O frontend deve chamar caminhos relativos `/api/...`. O proxy do Vite encaminha essas chamadas ao backend.
-
-Não introduza CORS se o proxy local existente resolver a comunicação.
+Nunca use `fetch` diretamente em páginas/componentes se a infraestrutura existente já oferecer a operação. Use caminhos relativos `/api/...` e o proxy Vite.
 
 ## Relacionamentos
 
-### 1:N
+Relacionamentos 1:N devem ser apresentados no formulário por controles legíveis, não por ids crus. Relacionamentos N:N devem possuir tabela associativa, chaves estrangeiras, persistência backend e controle simples no frontend.
 
-Quando uma entidade pertence a outra, o formulário deve apresentar uma seleção legível da entidade relacionada.
+## Testes automatizados obrigatórios
 
-Exemplo correto:
+Todo domínio gerado deve possuir testes automatizados em backend e frontend.
 
-`Universidade: [ Universidade Federal ▼ ]`
+### Backend
+Use Vitest. Cobrir no mínimo:
+- CRUD dos DAOs de cada entidade persistente;
+- mapeamento e persistência de relacionamentos 1:N e N:N;
+- comportamento das rotas/infraestrutura relevante;
+- regressões conhecidas;
+- banco de teste isolado.
 
-Evite expor ao usuário um campo cru como `universidadeId` quando a relação puder ser representada por uma seleção.
+### Frontend
+Use Vitest + React Testing Library + jsdom. Cobrir no mínimo:
+- renderização das páginas CRUD;
+- listagem dos registros;
+- criação;
+- edição quando aplicável;
+- exclusão;
+- controles de relacionamento;
+- cliente HTTP/CRUD encapsulado e regressões relevantes.
 
-### N:N
+Prefira testar comportamento observável, não detalhes internos de implementação. Os testes didáticos devem ter nomes claros para poderem orientar alunos em atividades TDD.
 
-Relacionamentos N:N devem possuir:
+Estrutura recomendada:
 
-- tabela associativa no SQLite;
-- chaves estrangeiras adequadas;
-- operações backend necessárias para consultar e atualizar associações;
-- controle simples no frontend para associar/desassociar entidades.
+```text
+backend/tests/
+├── didactic/
+└── infrastructure/
 
-A interface pode utilizar checkbox, multiselect ou outro controle simples e didático.
-
-## Exclusão e integridade referencial
-
-Respeite as regras de chave estrangeira do domínio.
-
-Não silencie erros de integridade.
-
-Quando uma exclusão não puder ocorrer por existir relacionamento dependente, a API deve retornar erro compreensível e o frontend deve apresentá-lo de forma legível.
+frontend/tests/
+├── didactic/
+└── infrastructure/
+```
 
 ## Regras de simplicidade
 
-Não introduza sem solicitação explícita:
-
-- ORM;
-- Prisma;
-- TypeORM;
-- Sequelize;
-- arquitetura Clean;
-- arquitetura Hexagonal;
-- microserviços;
-- Docker como requisito;
-- autenticação;
-- JWT;
-- Redux;
-- TanStack Query;
-- Axios;
-- Repository + Service + DAO simultaneamente;
-- DTOs duplicados sem necessidade;
-- abstrações criadas apenas por preferência estética.
+Não introduza sem solicitação explícita: ORM, Prisma, TypeORM, Sequelize, Clean/Hexagonal, microserviços, Docker como requisito, autenticação, JWT, Redux, TanStack Query, Axios, Repository + Service + DAO simultaneamente ou abstrações sem necessidade.
 
 ## Alteração de domínio
 
-Ao receber um novo `DOMAIN.md`:
-
-1. analise todas as entidades, atributos e relacionamentos;
-2. identifique tabelas normais e tabelas associativas;
-3. atualize `schema.sql`;
-4. atualize `seed.sql`;
-5. gere/ajuste modelos backend;
-6. gere/ajuste DAOs;
-7. registre CRUD e rotas de relacionamento;
-8. gere/ajuste modelos frontend;
-9. gere uma página CRUD para cada entidade persistente;
-10. implemente controles para relacionamentos;
-11. atualize menu/navegação;
-12. remova código do domínio anterior que não pertença ao novo domínio;
-13. preserve a infraestrutura compartilhada sempre que possível.
+Ao receber um novo `DOMAIN.md`: analise entidades/relacionamentos; atualize schema e seed; gere modelos e DAOs; registre CRUD/rotas; gere modelos e páginas frontend; implemente relacionamentos; atualize navegação; gere/atualize testes didáticos e de infraestrutura necessários; remova código do domínio anterior; preserve infraestrutura compartilhada.
 
 ## Critério obrigatório de conclusão
 
-O trabalho só está concluído quando a aplicação de referência estiver funcional ponta a ponta.
-
-Validar, no mínimo:
+O trabalho só está concluído quando build, testes e aplicação de referência estiverem funcionais.
 
 ### Backend
-
 ```bash
 cd backend
 npm install
 npm run build
+npm run test:run
 npm run db:reset
 npm run dev
 ```
 
 ### Frontend
-
 ```bash
 cd frontend
 npm install
 npm run build
+npm run test:run
 npm run dev
 ```
 
-Com os dois executando, verificar:
-
-- `/api/health` responde;
-- todas as entidades carregam no frontend;
-- CREATE funciona;
-- READ/listagem funciona;
-- UPDATE funciona;
-- DELETE funciona quando permitido pelo domínio;
-- relacionamentos 1:N funcionam;
-- relacionamentos N:N funcionam;
-- erros de API são apresentados de forma compreensível;
-- não existem erros TypeScript no build;
-- não existem TODOs ou stubs funcionais.
+Validar ainda: `/api/health`; carregamento de todas as entidades; CREATE/READ/UPDATE/DELETE; relações 1:N e N:N; mensagens de erro; ausência de erros TypeScript; ausência de TODOs/stubs; todos os testes verdes.
 
 ## Resultado esperado
 
-Um novo projeto gerado a partir deste template deve manter a mesma experiência estrutural independentemente do domínio:
-
-Backend:
-
-`models -> dao -> SQL -> SQLite`
-
-Frontend:
-
-`models -> pages/components -> API encapsulada`
+Backend: `models -> dao -> SQL -> SQLite`.
+Frontend: `models -> pages/components -> API encapsulada`.
+Testes: especificação executável do comportamento esperado.
 
 O domínio muda. A arquitetura didática permanece.
