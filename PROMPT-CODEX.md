@@ -10,24 +10,26 @@ Requisitos obrigatórios:
 - backend e frontend devem permanecer aplicações locais separadas;
 - gerar/ajustar modelos backend;
 - gerar/ajustar DAOs com SQL puro;
-- gerar/ajustar `backend/database/schema.sql`;
-- gerar/ajustar `backend/database/seed.sql`;
+- gerar/ajustar `backend/database/schema.sql` e `seed.sql`;
 - garantir CRUD completo de cada entidade persistente;
-- implementar relacionamentos 1:N e N:N no backend e no frontend;
+- implementar relacionamentos 1:N e N:N no backend e frontend;
 - gerar/ajustar modelos frontend;
-- criar pelo menos uma página CRUD funcional para cada entidade persistente;
-- atualizar a navegação para permitir acesso a todas as páginas;
+- criar pelo menos uma página CRUD funcional por entidade persistente;
+- atualizar navegação;
+- criar/atualizar testes automatizados de backend e frontend conforme `AGENTS.md`;
+- manter testes de banco isolados de `backend/database/app.db`;
 - usar a infraestrutura existente para SQLite, Fastify, Fetch, CRUD e proxy `/api`;
-- não introduzir ORM, Axios, Redux, Docker, autenticação ou novas camadas arquiteturais sem necessidade explícita;
+- não introduzir ORM, Axios, Redux, Docker, autenticação ou novas camadas sem necessidade explícita;
 - remover código do domínio anterior que não pertença ao novo domínio;
-- não deixar TODOs, stubs, métodos vazios ou funcionalidades propositalmente incompletas.
+- não deixar TODOs, stubs, métodos vazios ou funcionalidades incompletas.
 
-Antes de concluir, valide:
+Antes de concluir, execute e corrija todas as falhas:
 
 ```bash
 cd backend
 npm install
 npm run build
+npm run test:run
 npm run db:reset
 ```
 
@@ -35,8 +37,9 @@ npm run db:reset
 cd frontend
 npm install
 npm run build
+npm run test:run
 ```
 
 Depois valide a aplicação ponta a ponta com backend e frontend em execução, verificando criação, listagem, edição, exclusão e todos os relacionamentos definidos em `DOMAIN.md`.
 
-Só considere a tarefa concluída quando o projeto estiver funcional como solução de referência completa.
+Só considere a tarefa concluída quando builds e testes estiverem verdes e o projeto estiver funcional como solução de referência completa.
