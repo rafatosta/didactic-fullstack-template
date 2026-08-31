@@ -26,7 +26,8 @@ registerCrudRoutes<NovoAluno, ReturnType<AlunoDAO["listar"]>[number]>(app, "alun
 
 app.setErrorHandler((error, _request, reply) => {
     app.log.error(error);
-    reply.code(400).send({ message: error.message });
+    const message = error instanceof Error ? error.message : "Erro inesperado";
+    reply.code(400).send({ message });
 });
 
 await app.listen({ port: 3000, host: "127.0.0.1" });
