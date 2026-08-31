@@ -7,10 +7,10 @@ import { mkdirSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
-// src/framework -> src -> backend
-// Mantém o mesmo arquivo utilizado por scripts/reset-db.ts.
 const backendRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
-const databasePath = resolve(backendRoot, "database", "app.db");
+const databasePath = process.env.DIDACTIC_DATABASE_PATH
+    ? resolve(process.env.DIDACTIC_DATABASE_PATH)
+    : resolve(backendRoot, "database", "app.db");
 mkdirSync(dirname(databasePath), { recursive: true });
 
 class Database {
