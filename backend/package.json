@@ -6,7 +6,10 @@
     "dev": "tsx watch src/server.ts",
     "start": "tsx src/server.ts",
     "build": "tsc --noEmit",
-    "db:reset": "tsx scripts/reset-db.ts"
+    "db:reset": "tsx scripts/reset-db.ts",
+    "test": "vitest",
+    "test:watch": "vitest",
+    "test:run": "vitest run"
   },
   "dependencies": {
     "better-sqlite3": "^13.0.3",
@@ -16,6 +19,7 @@
     "@types/better-sqlite3": "^7.6.13",
     "@types/node": "^24.0.0",
     "tsx": "^4.20.0",
-    "typescript": "^5.9.0"
+    "typescript": "^5.9.0",
+    "vitest": "^4.0.0"
   }
 }
