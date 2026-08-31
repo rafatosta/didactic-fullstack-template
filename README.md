@@ -1,86 +1,56 @@
 # Didactic Fullstack Template
 
-Template didático full-stack para ensino de Programação Orientada a Objetos, SQL, APIs e componentes React com baixa curva de aprendizagem.
+Template didático full-stack para ensino de Programação Orientada a Objetos, SQL, APIs, testes e componentes React com baixa curva de aprendizagem.
 
-> Estado: **template de referência validado funcionalmente** para backend, frontend, SQLite, CRUD e relacionamentos 1:N e N:N.
+> Estado: **template de referência validado funcionalmente** para backend, frontend, SQLite, CRUD e relacionamentos 1:N e N:N. A suíte automatizada agora também faz parte do contrato de validação.
 
 ## Objetivo
 
-O template deve sempre representar uma **solução de referência completa e funcional**. A versão entregue aos alunos será preparada manualmente pelo professor, removendo apenas os arquivos ou trechos adequados à atividade.
+O template representa sempre uma **solução de referência completa e funcional**. A versão entregue aos alunos é preparada manualmente pelo professor, removendo apenas os arquivos ou trechos adequados à atividade.
 
-O aluno não precisa conhecer os detalhes de infraestrutura para trabalhar com modelos, DAO, SQL e componentes React.
+Os testes possuem duas funções:
+
+1. segurança do template e do Codex, detectando regressões automaticamente;
+2. apoio didático/TDD, permitindo que testes claros orientem o aluno sobre o comportamento esperado.
 
 ## Arquivos principais
 
-- `AGENTS.md`: contrato arquitetural permanente do template.
+- `AGENTS.md`: contrato arquitetural permanente, incluindo regras obrigatórias de testes.
 - `DOMAIN.md`: descrição variável do domínio atual.
-- `PROMPT-CODEX.md`: instrução operacional reutilizável para gerar ou substituir um domínio.
+- `PROMPT-CODEX.md`: instrução operacional para gerar/substituir um domínio e validar build + testes.
 - `docs/AREAS.md`: classificação entre área didática, infraestrutura e implementação de referência.
 
 ## Stack
 
 ### Backend
-
-- Node.js + TypeScript
-- Fastify 5
-- SQLite
-- `better-sqlite3`
-- padrão DAO
-- SQL puro
-- `schema.sql` para criação do banco
-- `seed.sql` para dados iniciais
-- sem ORM
+Node.js + TypeScript, Fastify 5, SQLite, `better-sqlite3`, DAO + SQL puro e Vitest.
 
 ### Frontend
-
-- Vite 8
-- React 19 + TypeScript
-- Tailwind CSS 4
-- Fetch encapsulado
-- CRUD encapsulado por infraestrutura própria
-- sem Axios
-- sem Redux
-- sem biblioteca de componentes obrigatória
+Vite 8, React 19 + TypeScript, Tailwind CSS 4, Fetch encapsulado, Vitest + React Testing Library + jsdom.
 
 ## Arquitetura didática
 
-Backend:
-
 ```text
-Modelos -> DAO -> SQL -> SQLite
+Backend:  Modelos -> DAO -> SQL -> SQLite
+Frontend: Modelos -> páginas/componentes -> API encapsulada
+Testes:   comportamento esperado -> implementação -> validação
 ```
 
-Frontend:
+## Testes
+
+Estrutura:
 
 ```text
-Modelos -> páginas/componentes -> API encapsulada
+backend/tests/
+├── didactic/          # comportamento do domínio; pode orientar atividades TDD
+└── infrastructure/    # manutenção/regressões da infraestrutura
+
+frontend/tests/
+├── didactic/
+└── infrastructure/
 ```
 
-A infraestrutura HTTP, conexão SQLite, Fetch, proxy e detalhes de integração permanecem prontos.
-
-## Estrutura
-
-```text
-backend/
-├── database/
-│   ├── schema.sql
-│   └── seed.sql
-├── scripts/
-│   └── reset-db.ts
-└── src/
-    ├── models/       # área didática
-    ├── dao/          # área didática
-    ├── framework/    # infraestrutura
-    └── routes/       # infraestrutura
-
-frontend/
-└── src/
-    ├── models/       # área didática
-    ├── pages/        # área didática/referência
-    └── framework/    # infraestrutura
-```
-
-## Executar localmente
+Os testes backend usam SQLite temporário/isolado e **não devem tocar em `backend/database/app.db`**.
 
 ### Backend
 
@@ -88,134 +58,60 @@ frontend/
 cd backend
 npm install
 npm run build
+npm run test:run
 npm run db:reset
 npm run dev
 ```
 
-API local: `http://127.0.0.1:3000`.
+Modo TDD/watch:
+
+```bash
+npm run test:watch
+```
 
 ### Frontend
 
-Em outro terminal:
-
 ```bash
 cd frontend
 npm install
 npm run build
+npm run test:run
 npm run dev
 ```
 
-Frontend local: `http://127.0.0.1:5173`.
-
-O Vite encaminha automaticamente chamadas iniciadas por `/api` para o backend. Assim, páginas e componentes não precisam conhecer host, porta ou configuração de CORS.
-
-## Domínio de referência validado
-
-A validação inicial utiliza:
-
-- Universidade;
-- Aluno;
-- Disciplina.
-
-Relacionamentos:
-
-- Universidade 1:N Aluno;
-- Aluno N:N Disciplina.
-
-Foram validados criação do banco, seed, build TypeScript, carregamento dos dados, criação, leitura, atualização, exclusão e integração frontend/backend.
-
-Veja `DOMAIN.md`.
-
-## Como criar um novo projeto com outro domínio
-
-### 1. Use este repositório como base
-
-Crie uma cópia ou novo repositório baseado neste template.
-
-### 2. Edite apenas o domínio
-
-Substitua em `DOMAIN.md`:
-
-- nome do projeto;
-- descrição;
-- diagrama de classes;
-- entidades e atributos;
-- relacionamentos;
-- regras específicas;
-- dados iniciais desejados.
-
-Não é necessário reescrever a arquitetura.
-
-### 3. Execute o prompt do Codex
-
-Use o conteúdo de `PROMPT-CODEX.md` ou envie ao Codex uma instrução equivalente a:
-
-```text
-Leia integralmente AGENTS.md e DOMAIN.md e implemente o domínio completo sobre este template. Preserve a infraestrutura e só conclua quando backend, frontend, banco, CRUD e relacionamentos estiverem funcionais.
-```
-
-O agente deve usar `AGENTS.md` como contrato obrigatório.
-
-### 4. Valide a solução de referência
-
-Backend:
+Modo TDD/watch:
 
 ```bash
-cd backend
-npm install
-npm run build
-npm run db:reset
-npm run dev
+npm run test:watch
 ```
 
-Frontend:
+## Domínio de referência
 
-```bash
-cd frontend
-npm install
-npm run build
-npm run dev
-```
+Universidade, Aluno e Disciplina, com Universidade 1:N Aluno e Aluno N:N Disciplina. Veja `DOMAIN.md`.
 
-Teste pela interface:
+## Como gerar outro domínio
 
-- listagem;
-- criação;
-- edição;
-- exclusão;
-- relacionamentos 1:N;
-- relacionamentos N:N;
-- mensagens de erro.
+1. copie/use este template como base;
+2. substitua o conteúdo variável de `DOMAIN.md`;
+3. execute as instruções de `PROMPT-CODEX.md`;
+4. o Codex deve gerar backend, frontend, schema, seed, CRUD, relacionamentos e testes;
+5. builds e `npm run test:run` de backend e frontend devem passar;
+6. valide a aplicação ponta a ponta;
+7. somente depois prepare manualmente a versão do aluno.
 
-### 5. Prepare manualmente a versão do aluno
+## Critério obrigatório de conclusão
 
-Somente depois da solução completa estar validada, o professor decide quais arquivos ou trechos serão removidos.
+Um novo domínio só está concluído quando:
 
-Exemplos possíveis:
-
-- remover modelos backend;
-- remover DAOs ou apenas os SQLs;
-- manter backend completo e remover modelos/componentes frontend;
-- manter um CRUD como exemplo e remover outros;
-- retirar apenas a implementação de um relacionamento.
-
-O template não automatiza essa etapa porque a escolha depende do objetivo pedagógico de cada atividade.
-
-## Critério obrigatório para novos domínios
-
-Um domínio só está concluído quando:
-
-1. `schema.sql` e `seed.sql` recriam o SQLite local;
-2. backend e frontend passam no build TypeScript;
-3. todas as entidades persistentes possuem CRUD funcional;
-4. cada entidade persistente possui uma página CRUD funcional;
-5. relacionamentos 1:N e N:N definidos no domínio funcionam;
-6. o frontend consome a API pela infraestrutura pronta;
-7. criação, leitura, atualização e exclusão foram verificadas;
-8. não existem TODOs, stubs ou implementações propositalmente incompletas.
+- `schema.sql` e `seed.sql` recriam o banco;
+- builds backend/frontend passam;
+- testes backend/frontend estão verdes;
+- todas as entidades possuem CRUD funcional;
+- cada entidade possui página CRUD;
+- relações 1:N e N:N funcionam;
+- frontend usa a infraestrutura de API pronta;
+- não existem TODOs, stubs ou implementações incompletas.
 
 ## Regra fundamental
 
-**O domínio muda; a arquitetura didática permanece.**
-
-Antes de qualquer alteração estrutural, consulte `AGENTS.md`.
+**O domínio muda; a arquitetura didática e os testes de validação permanecem.**
