@@ -1,29 +1,42 @@
-# Prompt operacional para o Codex
+# Prompt único para gerar um novo projeto
 
-Leia integralmente `AGENTS.md` e `DOMAIN.md` antes de modificar qualquer arquivo.
+Crie o projeto completo a partir deste template e do material fornecido nesta solicitação.
 
-Implemente o domínio descrito em `DOMAIN.md` sobre este template, preservando a arquitetura e a infraestrutura já validadas.
+Antes de modificar qualquer código:
 
-Requisitos obrigatórios:
+1. leia integralmente `AGENTS.md`;
+2. analise o texto desta solicitação;
+3. verifique se existem imagens, diagramas de classes, PDFs, documentos, arquivos anexados ou referências explícitas a anexos que descrevam o domínio;
+4. consolide as informações encontradas;
+5. gere ou substitua automaticamente `DOMAIN.md` com o novo domínio;
+6. não invente regras de negócio que não estejam explícitas ou claramente determinadas pelo material fornecido.
 
-- entregar uma solução de referência completa e funcional;
-- backend e frontend devem permanecer aplicações locais separadas;
-- gerar/ajustar modelos backend;
-- gerar/ajustar DAOs com SQL puro;
-- gerar/ajustar `backend/database/schema.sql` e `seed.sql`;
-- garantir CRUD completo de cada entidade persistente;
-- implementar relacionamentos 1:N e N:N no backend e frontend;
-- gerar/ajustar modelos frontend;
-- criar pelo menos uma página CRUD funcional por entidade persistente;
-- atualizar navegação;
-- criar/atualizar testes automatizados de backend e frontend conforme `AGENTS.md`;
-- manter testes de banco isolados de `backend/database/app.db`;
-- usar a infraestrutura existente para SQLite, Fastify, Fetch, CRUD e proxy `/api`;
-- não introduzir ORM, Axios, Redux, Docker, autenticação ou novas camadas sem necessidade explícita;
-- remover código do domínio anterior que não pertença ao novo domínio;
-- não deixar TODOs, stubs, métodos vazios ou funcionalidades incompletas.
+Depois implemente integralmente o novo domínio sobre a arquitetura existente.
 
-Antes de concluir, execute e corrija todas as falhas:
+Remova do projeto todo código que pertença exclusivamente ao domínio de referência anterior e que não faça parte do novo sistema, preservando a infraestrutura compartilhada.
+
+Gere ou ajuste automaticamente tudo o que for necessário:
+
+- modelos backend;
+- DAOs com SQL puro;
+- `backend/database/schema.sql`;
+- `backend/database/seed.sql`;
+- CRUD e rotas da API;
+- relacionamentos definidos no domínio;
+- modelos frontend;
+- páginas CRUD;
+- menu/navegação;
+- controles legíveis para relacionamentos;
+- testes didáticos;
+- testes de infraestrutura necessários.
+
+Preserve integralmente as regras arquiteturais de `AGENTS.md`.
+
+Não introduza ORM, Prisma, TypeORM, Sequelize, Axios, Redux, Docker, autenticação ou camadas arquiteturais adicionais sem necessidade explícita.
+
+Não deixe TODOs, stubs, métodos vazios ou funcionalidades incompletas.
+
+Antes de concluir, execute e corrija todas as falhas encontradas:
 
 ```bash
 cd backend
@@ -40,6 +53,17 @@ npm run build
 npm run test:run
 ```
 
-Depois valide a aplicação ponta a ponta com backend e frontend em execução, verificando criação, listagem, edição, exclusão e todos os relacionamentos definidos em `DOMAIN.md`.
+Valide também a aplicação integrada com backend e frontend em execução.
 
-Só considere a tarefa concluída quando builds e testes estiverem verdes e o projeto estiver funcional como solução de referência completa.
+Só considere a tarefa concluída quando:
+
+- `DOMAIN.md` representar corretamente o novo domínio;
+- o domínio anterior tiver sido removido quando não aplicável;
+- banco for recriado corretamente;
+- backend e frontend compilarem;
+- todos os testes estiverem verdes;
+- CRUD funcionar;
+- relacionamentos funcionarem;
+- a aplicação estiver funcional como solução de referência completa.
+
+Ao final, apresente um resumo curto com domínio identificado, entidades, relacionamentos, principais alterações e resultados de build/testes.
