@@ -4,7 +4,16 @@ Este arquivo define as regras obrigatórias para qualquer agente que modifique e
 
 ## Objetivo do template
 
-Este repositório é um template didático full-stack para ensino de Programação Orientada a Objetos, SQL, APIs, testes e componentes React com baixa curva de aprendizagem.
+Este repositório é um template didático full-stack autossuficiente para ensino de Programação Orientada a Objetos, SQL, APIs, testes e componentes React com baixa curva de aprendizagem.
+
+O fluxo esperado para um novo projeto é simples:
+
+1. o usuário cria um fork deste template;
+2. renomeia o repositório;
+3. abre o novo repositório no Codex;
+4. fornece uma descrição textual, diagrama de classes, imagem, PDF, arquivo anexado ou referência explícita a material que descreva o domínio;
+5. o agente interpreta o material, gera `DOMAIN.md` automaticamente e implementa o projeto completo;
+6. o agente executa build, testes e validações antes de concluir.
 
 O resultado de qualquer geração deve ser uma **solução de referência completa e funcional**. A versão destinada aos alunos será preparada manualmente pelo professor depois da validação.
 
@@ -13,10 +22,58 @@ Nunca deixe TODOs, stubs, métodos vazios, páginas incompletas ou funcionalidad
 ## Fonte da verdade
 
 - `AGENTS.md`: arquitetura fixa e regras que não devem variar entre projetos.
-- `DOMAIN.md`: domínio variável do projeto atual.
-- Implementação existente: referência concreta de como as regras abaixo devem ser aplicadas.
+- material fornecido pelo usuário na solicitação: fonte inicial para descoberta do novo domínio;
+- `DOMAIN.md`: documentação gerada do domínio atual e fonte da verdade depois que o domínio for interpretado;
+- implementação existente: referência concreta de como a arquitetura deve ser aplicada.
 
-Em caso de conflito, preserve primeiro a arquitetura validada existente e depois ajuste a implementação do novo domínio.
+`DOMAIN.md` **não é pré-requisito manual para criar um novo projeto**. Em um fork novo, o agente deve substituí-lo automaticamente com base no material fornecido pelo usuário.
+
+## Descoberta automática do domínio
+
+Antes de alterar código de domínio, o agente deve:
+
+1. ler integralmente este `AGENTS.md`;
+2. analisar a solicitação atual do usuário;
+3. verificar se há imagens anexadas, diagramas de classes, PDFs, documentos, arquivos ou referências explícitas a anexos que descrevam o sistema;
+4. analisar todas as fontes disponíveis e consolidar entidades, atributos, tipos, cardinalidades e regras explícitas;
+5. usar o nome do repositório e o texto do usuário apenas como contexto auxiliar, nunca como substituto de informações mais precisas presentes no diagrama ou arquivo;
+6. não inventar regras de negócio que não estejam explícitas ou claramente determinadas pela estrutura do domínio;
+7. gerar ou substituir `DOMAIN.md` antes de implementar o novo domínio.
+
+Se houver conflito entre fontes, priorize, nesta ordem:
+
+1. instrução explícita mais recente do usuário;
+2. diagrama/arquivo fornecido especificamente para o novo projeto;
+3. descrição textual do novo projeto;
+4. conteúdo antigo de `DOMAIN.md`, que em um fork deve ser tratado apenas como domínio de referência a ser substituído.
+
+O `DOMAIN.md` gerado deve registrar no mínimo:
+
+- nome do projeto;
+- descrição resumida;
+- entidades persistentes;
+- atributos e tipos;
+- relacionamentos e cardinalidades;
+- regras de domínio explicitamente conhecidas;
+- tabelas associativas necessárias;
+- dados iniciais suficientes para testar CRUD e relacionamentos.
+
+## Substituição do domínio de referência
+
+O template contém Universidade, Aluno e Disciplina apenas como implementação de referência validada.
+
+Ao identificar um novo domínio, remova completamente do projeto tudo o que pertencer exclusivamente ao domínio anterior e que não faça parte do novo sistema, incluindo quando aplicável:
+
+- modelos;
+- DAOs;
+- rotas/recursos específicos;
+- páginas;
+- itens de navegação;
+- tabelas e seeds;
+- testes didáticos;
+- referências textuais específicas do domínio anterior.
+
+Preserve a infraestrutura compartilhada.
 
 ## Stack obrigatória
 
@@ -77,13 +134,13 @@ Testes nunca devem usar ou apagar `backend/database/app.db`. Use banco SQLite te
 
 ## Backend
 
-Cada entidade persistente definida em `DOMAIN.md` deve possuir modelo TypeScript e DAO próprio. O DAO deve encapsular persistência, usar SQL puro, implementar CRUD completo, reutilizar a infraestrutura de banco e evitar camadas adicionais desnecessárias.
+Cada entidade persistente definida no `DOMAIN.md` gerado deve possuir modelo TypeScript e DAO próprio. O DAO deve encapsular persistência, usar SQL puro, implementar CRUD completo, reutilizar a infraestrutura de banco e evitar camadas adicionais desnecessárias.
 
 Cada entidade deve expor endpoints para listar, buscar por id, criar, atualizar e excluir, quando aplicável. Rotas adicionais são permitidas apenas para relacionamentos ou comportamentos que o CRUD genérico não represente.
 
 ## Frontend
 
-Cada entidade persistente definida em `DOMAIN.md` deve possuir pelo menos uma página CRUD funcional. A navegação principal deve permitir acesso a todas as entidades.
+Cada entidade persistente definida no `DOMAIN.md` gerado deve possuir pelo menos uma página CRUD funcional. A navegação principal deve permitir acesso a todas as entidades.
 
 O frontend possui modelos próprios correspondentes aos contratos da API. A duplicação entre backend e frontend é intencional e didática.
 
@@ -133,9 +190,23 @@ frontend/tests/
 
 Não introduza sem solicitação explícita: ORM, Prisma, TypeORM, Sequelize, Clean/Hexagonal, microserviços, Docker como requisito, autenticação, JWT, Redux, TanStack Query, Axios, Repository + Service + DAO simultaneamente ou abstrações sem necessidade.
 
-## Alteração de domínio
+## Processo de geração de um novo projeto
 
-Ao receber um novo `DOMAIN.md`: analise entidades/relacionamentos; atualize schema e seed; gere modelos e DAOs; registre CRUD/rotas; gere modelos e páginas frontend; implemente relacionamentos; atualize navegação; gere/atualize testes didáticos e de infraestrutura necessários; remova código do domínio anterior; preserve infraestrutura compartilhada.
+Depois de descobrir e documentar o domínio em `DOMAIN.md`:
+
+1. remova código específico do domínio anterior;
+2. atualize `schema.sql` e `seed.sql`;
+3. gere modelos backend;
+4. gere DAOs;
+5. registre CRUD e rotas necessárias;
+6. gere modelos frontend;
+7. gere páginas CRUD;
+8. implemente os relacionamentos na interface;
+9. atualize menu/navegação;
+10. gere ou adapte testes didáticos;
+11. preserve e ajuste testes de infraestrutura somente quando necessário;
+12. execute todas as validações obrigatórias;
+13. corrija automaticamente qualquer falha encontrada antes de concluir.
 
 ## Critério obrigatório de conclusão
 
@@ -160,7 +231,9 @@ npm run test:run
 npm run dev
 ```
 
-Validar ainda: `/api/health`; carregamento de todas as entidades; CREATE/READ/UPDATE/DELETE; relações 1:N e N:N; mensagens de erro; ausência de erros TypeScript; ausência de TODOs/stubs; todos os testes verdes.
+Validar ainda: `/api/health`; carregamento de todas as entidades; CREATE/READ/UPDATE/DELETE; relações definidas no domínio; mensagens de erro; ausência de erros TypeScript; ausência de TODOs/stubs; todos os testes verdes.
+
+Não considere concluído apenas porque o código compila. Corrija as falhas encontradas durante build, testes ou validação funcional.
 
 ## Resultado esperado
 
