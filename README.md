@@ -2,22 +2,106 @@
 
 Template didático full-stack para ensino de Programação Orientada a Objetos, SQL, APIs, testes e componentes React com baixa curva de aprendizagem.
 
-> Estado: **template de referência validado funcionalmente** para backend, frontend, SQLite, CRUD e relacionamentos 1:N e N:N. A suíte automatizada agora também faz parte do contrato de validação.
+> Estado: **template de referência validado funcionalmente** para backend, frontend, SQLite, CRUD, relacionamentos 1:N e N:N e testes automatizados.
 
 ## Objetivo
 
-O template representa sempre uma **solução de referência completa e funcional**. A versão entregue aos alunos é preparada manualmente pelo professor, removendo apenas os arquivos ou trechos adequados à atividade.
+Este repositório deve ser suficiente, sozinho, para gerar um novo projeto completo com Codex.
 
-Os testes possuem duas funções:
+Não é necessário preencher `DOMAIN.md` manualmente nem utilizar outro repositório de workflow.
 
-1. segurança do template e do Codex, detectando regressões automaticamente;
-2. apoio didático/TDD, permitindo que testes claros orientem o aluno sobre o comportamento esperado.
+O template representa sempre uma **solução de referência completa e funcional**. A versão entregue aos alunos é preparada manualmente pelo professor depois da validação.
+
+## Fluxo para criar um novo projeto
+
+### 1. Faça um fork deste repositório
+
+Crie um fork de:
+
+```text
+rafatosta/didactic-fullstack-template
+```
+
+### 2. Renomeie o fork
+
+Use o nome do novo sistema.
+
+Exemplo:
+
+```text
+sistema-pedido
+```
+
+### 3. Abra o novo repositório no Codex
+
+O Codex deve trabalhar no fork, não no template original.
+
+### 4. Forneça o domínio
+
+Na mesma solicitação ao Codex, forneça pelo menos uma fonte que descreva o sistema:
+
+- descrição textual;
+- diagrama de classes em imagem;
+- PDF;
+- documento/arquivo anexado;
+- outro arquivo contendo entidades e relacionamentos;
+- referência explícita a um anexo presente na conversa.
+
+Exemplo simples:
+
+```text
+Crie o projeto com base no diagrama de classes anexado.
+```
+
+Ou:
+
+```text
+Crie um Sistema de Pedidos com Item, Pedido e Venda conforme a descrição abaixo.
+```
+
+### 5. Execute o prompt único
+
+Use `PROMPT-CODEX.md`.
+
+Esse prompt instrui o Codex a fazer automaticamente todo o restante.
+
+## O que o Codex deve fazer automaticamente
+
+```text
+material fornecido pelo usuário
+        ↓
+identificar entidades e relacionamentos
+        ↓
+gerar/substituir DOMAIN.md
+        ↓
+remover domínio de referência anterior
+        ↓
+gerar schema.sql + seed.sql
+        ↓
+gerar modelos + DAOs + API
+        ↓
+gerar frontend + páginas CRUD
+        ↓
+gerar relacionamentos na interface
+        ↓
+gerar/adaptar testes
+        ↓
+executar build + testes + db:reset
+        ↓
+corrigir falhas encontradas
+        ↓
+validar aplicação
+        ↓
+projeto de referência pronto
+```
+
+`DOMAIN.md` é gerado pelo Codex e passa a documentar o domínio identificado. Ele não precisa ser preparado manualmente antes da geração.
 
 ## Arquivos principais
 
-- `AGENTS.md`: contrato arquitetural permanente, incluindo regras obrigatórias de testes.
-- `DOMAIN.md`: descrição variável do domínio atual.
-- `PROMPT-CODEX.md`: instrução operacional para gerar/substituir um domínio e validar build + testes.
+- `AGENTS.md`: contrato arquitetural permanente e processo obrigatório de descoberta/geração do domínio.
+- `PROMPT-CODEX.md`: prompt único para criar um projeto novo.
+- `DOMAIN.md`: domínio atual; em novos projetos é gerado/substituído automaticamente.
 - `docs/AREAS.md`: classificação entre área didática, infraestrutura e implementação de referência.
 
 ## Stack
@@ -36,23 +120,36 @@ Frontend: Modelos -> páginas/componentes -> API encapsulada
 Testes:   comportamento esperado -> implementação -> validação
 ```
 
+## Domínio de referência
+
+O template original contém Universidade, Aluno e Disciplina apenas para provar que toda a arquitetura funciona.
+
+Em um novo fork, essas entidades devem ser removidas automaticamente quando não fizerem parte do novo domínio.
+
 ## Testes
+
+Os testes possuem duas funções:
+
+1. segurança do template e do Codex, detectando regressões;
+2. apoio didático/TDD para os alunos.
 
 Estrutura:
 
 ```text
 backend/tests/
-├── didactic/          # comportamento do domínio; pode orientar atividades TDD
-└── infrastructure/    # manutenção/regressões da infraestrutura
+├── didactic/
+└── infrastructure/
 
 frontend/tests/
 ├── didactic/
 └── infrastructure/
 ```
 
-Os testes backend usam SQLite temporário/isolado e **não devem tocar em `backend/database/app.db`**.
+Os testes backend usam SQLite temporário/isolado e nunca devem alterar `backend/database/app.db`.
 
-### Backend
+## Validação obrigatória
+
+Backend:
 
 ```bash
 cd backend
@@ -63,13 +160,7 @@ npm run db:reset
 npm run dev
 ```
 
-Modo TDD/watch:
-
-```bash
-npm run test:watch
-```
-
-### Frontend
+Frontend:
 
 ```bash
 cd frontend
@@ -79,38 +170,31 @@ npm run test:run
 npm run dev
 ```
 
-Modo TDD/watch:
+Um novo projeto só está concluído quando:
 
-```bash
-npm run test:watch
-```
-
-## Domínio de referência
-
-Universidade, Aluno e Disciplina, com Universidade 1:N Aluno e Aluno N:N Disciplina. Veja `DOMAIN.md`.
-
-## Como gerar outro domínio
-
-1. copie/use este template como base;
-2. substitua o conteúdo variável de `DOMAIN.md`;
-3. execute as instruções de `PROMPT-CODEX.md`;
-4. o Codex deve gerar backend, frontend, schema, seed, CRUD, relacionamentos e testes;
-5. builds e `npm run test:run` de backend e frontend devem passar;
-6. valide a aplicação ponta a ponta;
-7. somente depois prepare manualmente a versão do aluno.
-
-## Critério obrigatório de conclusão
-
-Um novo domínio só está concluído quando:
-
-- `schema.sql` e `seed.sql` recriam o banco;
+- `DOMAIN.md` representa corretamente o novo domínio;
+- código específico do domínio anterior foi removido;
+- banco é recriado corretamente;
 - builds backend/frontend passam;
 - testes backend/frontend estão verdes;
-- todas as entidades possuem CRUD funcional;
-- cada entidade possui página CRUD;
-- relações 1:N e N:N funcionam;
-- frontend usa a infraestrutura de API pronta;
-- não existem TODOs, stubs ou implementações incompletas.
+- CRUD funciona;
+- relacionamentos funcionam;
+- interface utiliza controles legíveis para relacionamentos;
+- não existem TODOs, stubs ou funcionalidades incompletas.
+
+## Resumo
+
+Para criar um projeto novo, o professor precisa fazer apenas:
+
+```text
+1. Fork
+2. Renomear
+3. Abrir no Codex
+4. Anexar/descrever o domínio
+5. Executar PROMPT-CODEX.md
+```
+
+Todo o restante deve ser automatizado pelo Codex.
 
 ## Regra fundamental
 
